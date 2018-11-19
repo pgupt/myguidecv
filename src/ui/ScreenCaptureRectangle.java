@@ -7,6 +7,7 @@ import javax.swing.*;
 
 /** Getting a Rectangle of interest on the screen.
 Requires the MotivatedEndUser API - sold separately. */
+
 public class ScreenCaptureRectangle {
 
     Rectangle captureRect;
