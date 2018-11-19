@@ -5,6 +5,7 @@ import java.util.*;
 // import static org.junit.Assert.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.sql.Timestamp;
 import java.awt.*;
 import javax.imageio.ImageIO;
 public class DemoTest {
@@ -28,7 +29,8 @@ public class DemoTest {
 		Robot capture = new Robot();
 		Rectangle rect  = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
 		BufferedImage buf  = capture.createScreenCapture(rect);
-		ImageIO.write(buf, "png", new File("craft.png"));
+		Timestamp t = new Timestamp(System.currentTimeMillis());
+		ImageIO.write(buf, "png", new File(""+t.getTime()+".png"));
 		System.out.println("screen has been captured");
 		//should probably add a mouse listener event and caputre positon x and y of mouse
 		
