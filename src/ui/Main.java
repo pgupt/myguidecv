@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.AWTException;
+
 import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -9,10 +10,12 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import org.sikuli.guide.Guide;
 import org.sikuli.script.Screen;
 
 import javafx.application.Application;
@@ -39,118 +42,103 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.AnchorPane;
 
-public class Main extends Application {
+import creator.*;
 
+public class Main extends Application {
+	
+	private static Main main;
 	static Point initial = new Point();
 	static Rectangle rect = new Rectangle();
-
+	ElememtCapture elementCapture;
+	CreatorUI creatorUI;
+	int stepCount;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see javafx.application.Application#start(javafx.stage.Stage)
+	 * Making this class singleton
+	 */
+	/*private Main() {
+		
+	}
+	
+	public Main getInstance() {
+		if(main == null){
+	        synchronized (Main.class) {
+	            if(main == null){
+	                main = new Main();
+	            }
+	        }
+	    }
+	    return main;
+	}*/
 	
 	@SuppressWarnings("restriction")
 	@Override
 	  public void start(Stage primaryStage) throws Exception {
-	    Button runExample = new Button("Run example");
-	    runExample.setOnAction((e) -> {
-	    	 DemoTest d = new DemoTest();
-	    	 d.demo();
-	    });
-	    
 
-	    Button capImage = new Button("Capture Images");
-	    capImage.setOnAction((e) -> {
-	    DemoTest d = new DemoTest();
-		    try {
-				d.snipTool();
-			} catch (AWTException | IOException e1) {
+		Button capImage = new Button("Capture Images");
+		/*capImage.setOnAction((e) -> {
+			primaryStage.hide();
+			elementCapture = new ElememtCapture();
+			try {
+				Thread.sleep(500);
+				elementCapture.screenshot();
+			} catch (AWTException | IOException | InterruptedException e1) {
 				e1.printStackTrace();
 			}
-		    		    
+
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    		//GridPane gridPane3 = new GridPane();	   
+			//GridPane gridPane3 = new GridPane();	   
 			AnchorPane stackPane = new AnchorPane();
 
-    		//Scene imageScene = new Scene(gridPane3,screenSize.getWidth(),screenSize.getHeight());
-    		Scene imageScene = new Scene(stackPane,screenSize.getWidth(),screenSize.getHeight());
-    		final Canvas canvas = new Canvas(screenSize.getWidth(),screenSize.getHeight());
-    		//GraphicsContext gc = canvas.getGraphicsContext2D();
-    		Image capture = new Image("File:test.png");
-    		//gridPane3.add(new ImageView(capture),0,0);        
-    		
-    		stackPane.getChildren().addAll(canvas, new ImageView(capture),rect);
-    		primaryStage.setScene(imageScene);
-    		primaryStage.setMaximized(true);
-    		primaryStage.show();
-    		
-    		//Point initial = new Point();
-    		imageScene.setOnMousePressed(event -> {       
-    			stackPane.getChildren().remove(rect);
-       			initial = MouseInfo.getPointerInfo().getLocation();
-    			System.out.println("detected: " + initial.getX() +", " + initial.getY());
-                event.consume();                
-            });
-    		
-    		imageScene.setOnMouseDragged(event -> {       
-    			stackPane.getChildren().remove(rect);
-       			Point dragging = MouseInfo.getPointerInfo().getLocation();
-    			System.out.println("!!dragging!!: " + dragging.getX() +", " + dragging.getY());
-    		//	gc.strokeRect(initial.getX(), initial.getY(), Math.abs(initial.getX()-dragging.getX()),Math.abs(initial.getY()-dragging.getY()) ); 			
-    			rect = new Rectangle((int)initial.getX(), (int)(initial.getY() - 30), (int)Math.abs(initial.getX()-dragging.getX()),(int)Math.abs(initial.getY()-dragging.getY()));
-    			rect.opacityProperty().set(0.1);
-    			//Rectangle rect = new Rectangle();
-    			//rect.setX(arg0);
-    			stackPane.getChildren().add(rect);
-    			event.consume();                
-            });
-    		
-    		imageScene.setOnMouseReleased(event -> {
-    			Point finalPoint = MouseInfo.getPointerInfo().getLocation();
-    			System.out.println("released: " + finalPoint.getX() +", " + finalPoint.getY());   
-    			cropImage("test.png",rect);
-                event.consume();
-            });
-    		
-    		
-	    });
+			//Scene imageScene = new Scene(gridPane3,screenSize.getWidth(),screenSize.getHeight());
+			Scene imageScene = new Scene(stackPane,screenSize.getWidth(),screenSize.getHeight());
+			final Canvas canvas = new Canvas(screenSize.getWidth(),screenSize.getHeight());
+			//GraphicsContext gc = canvas.getGraphicsContext2D();
+			Image capture = new Image("File:screenshot.png");
+			//gridPane3.add(new ImageView(capture),0,0);        
+
+			stackPane.getChildren().addAll(canvas, new ImageView(capture),rect);
+			primaryStage.setScene(imageScene);
+			primaryStage.setMaximized(true);
+			primaryStage.show();
+
+			//Point initial = new Point();
+			imageScene.setOnMousePressed(event -> {       
+				stackPane.getChildren().remove(rect);
+				initial = MouseInfo.getPointerInfo().getLocation();
+				System.out.println("detected: " + initial.getX() +", " + initial.getY());
+				event.consume();                
+			});
+
+			imageScene.setOnMouseDragged(event -> {       
+				stackPane.getChildren().remove(rect);
+				Point dragging = MouseInfo.getPointerInfo().getLocation();
+				System.out.println("!!dragging!!: " + dragging.getX() +", " + dragging.getY());
+				//	gc.strokeRect(initial.getX(), initial.getY(), Math.abs(initial.getX()-dragging.getX()),Math.abs(initial.getY()-dragging.getY()) ); 			
+				rect = new Rectangle((int)initial.getX(), (int)(initial.getY() - 30), (int)Math.abs(initial.getX()-dragging.getX()),(int)Math.abs(initial.getY()-dragging.getY()));
+				rect.opacityProperty().set(0.1);
+				//Rectangle rect = new Rectangle();
+				//rect.setX(arg0);
+				stackPane.getChildren().add(rect);
+				event.consume();                
+			});
+
+			imageScene.setOnMouseReleased(event -> {
+				Point finalPoint = MouseInfo.getPointerInfo().getLocation();
+				System.out.println("released: " + finalPoint.getX() +", " + finalPoint.getY());   
+				cropImage("screenshot.png",rect);
+				event.consume();
+			});
+
+
+		});*/
     			    
 	    Button createGuide = new Button("Create new guide");
 	    createGuide.setOnAction((e) -> {
-	    	Label guideTitleLabel = new Label("Guide title: ");
-	    	TextField guideTitleTF = new TextField();
-	    	
-	    	Label guideDesc = new Label("Guide description: ");
-	    	TextField guideDescTF = new TextField();
-	    	
-	    	Button submit = new Button("Submit");
-	    	
-	    	GridPane gridPane  = new GridPane();
-	    	gridPane.add(guideTitleLabel, 0, 0);
-	    	gridPane.add(guideTitleTF, 1, 0);
-	    	
-	    	gridPane.add(guideDesc, 0, 1);
-	    	gridPane.add(guideDescTF, 1, 1);
-	    	
-	    	gridPane.add(submit, 1, 3);
-	    	
-	    	Scene scene = new Scene(gridPane, 300, 300);
-	    	primaryStage.setScene(scene);
-	        primaryStage.show();
-	        
-	        submit.setOnAction((f) -> {
-	        	String guideName = guideTitleTF.getText();
-	        	new File("./"+guideName).mkdirs();
-	        	
-	        	Button addStep = new Button("Add step");
-	        	GridPane gridPane2  = new GridPane();
-	        	gridPane2.add(addStep, 2, 1);
-	        	Scene scene2 = new Scene(gridPane2, 300, 300);
-	        	primaryStage.setScene(scene2);
-	        	primaryStage.show();
-	        	
-	        	addStep.setOnAction((g) -> {	    	
-	    	   
-	        		System.out.println("Start snipping tool...");
-	        	
-	        	});
-	        });	        
+	    	creatorUI = new CreatorUI(primaryStage);
+	    	creatorUI.createNewGuide();
 	    });
 	    
 	    GridPane gridPane  = new GridPane();
@@ -166,9 +154,8 @@ public class Main extends Application {
         // Set the vertical gap between rows
         gridPane.setVgap(10);
 
-        
-        gridPane.add(runExample, 0, 1);
-        gridPane.add(capImage, 0, 2);
+       
+        // gridPane.add(capImage, 0, 2); // not adding capture Image button in UI
         gridPane.add(createGuide, 0, 3);
 	    Scene scene = new Scene(gridPane, 300, 300);
 	    primaryStage.setTitle("MyGuide Desktop Automator");
@@ -181,6 +168,10 @@ public class Main extends Application {
 		try {
 			BufferedImage image = ImageIO.read(new File(imageFile));
 			BufferedImage subImage = image.getSubimage((int)rect.getX(),(int)rect.getY(),(int)rect.getWidth(),(int)rect.getHeight());
+			Timestamp t = new Timestamp(System.currentTimeMillis());
+			// String croppedImageFilename = "./"+ guideName+"/"+t.getTime()+".png";
+			// ImageIO.write(subImage, "png", new File(croppedImageFilename));
+			// System.out.println("File created: "+croppedImageFilename);
 			ImageIO.write(subImage, "png", new File("test_cropped.png"));
 			return subImage;
 		} catch (IOException e) {
