@@ -41,6 +41,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.AnchorPane;
+import javafx.geometry.VPos;
+
 
 import creator.*;
 
@@ -134,11 +136,18 @@ public class Main extends Application {
 
 
 		});*/
+		
     			    
 	    Button createGuide = new Button("Create new guide");
 	    createGuide.setOnAction((e) -> {
 	    	creatorUI = new CreatorUI(primaryStage);
 	    	creatorUI.createNewGuide();
+	    });
+	    
+	    Button playGuide = new Button("Play Guide");
+	    playGuide.setOnAction((f) -> {
+	    	creatorUI = new CreatorUI(primaryStage);
+	    	creatorUI.playGuide();
 	    });
 	    
 	    GridPane gridPane  = new GridPane();
@@ -157,6 +166,9 @@ public class Main extends Application {
        
         // gridPane.add(capImage, 0, 2); // not adding capture Image button in UI
         gridPane.add(createGuide, 0, 3);
+        GridPane.setValignment(createGuide, VPos.CENTER);
+        gridPane.add(playGuide, 0, 5);
+        GridPane.setValignment(playGuide, VPos.CENTER);
 	    Scene scene = new Scene(gridPane, 300, 300);
 	    primaryStage.setTitle("MyGuide Desktop Automator");
 	    primaryStage.getIcons().add(new Image("file:resources\\ui\\ed-auto-cloud.png"));

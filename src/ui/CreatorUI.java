@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 
+import creator.DB;
 import creator.ElememtCapture;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -29,7 +30,9 @@ import javafx.scene.control.ComboBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-
+import javafx.geometry.VPos;
+import javafx.geometry.Pos;
+import javafx.scene.control.ListView;
 
 @SuppressWarnings("restriction")
 public class CreatorUI extends Application {
@@ -38,6 +41,8 @@ public class CreatorUI extends Application {
 	static Point initial = new Point();
 	static Rectangle rect = new Rectangle();
 	int stepCount;
+	int guideId;
+	public String author = "pramod";
 	Label guideTitleLabel;
 	TextField guideTitleTF;
 	String guideName;
@@ -76,17 +81,25 @@ public class CreatorUI extends Application {
         primaryStage.show();
         
         submit.setOnAction((f) -> {
-        	guideName = guideTitleTF.getText();
-        	new File("./"+guideName).mkdirs();
-        	this.addStep();
+            guideName = guideTitleTF.getText();
+            new File("./Guides/"+guideName).mkdirs();
+            this.addStep();
+            //use this part to link to database
+            DB db = new DB();
+            db.createGuide(guideName, author); //default name to Pramod
+
+            //fornowguideid will be Math.random 100000 or
         });
    }
 
 	private void addStep() {
     	Button addStep = new Button("Capture Screen");
-    	GridPane addStepGridPane  = new GridPane();
-    	addStepGridPane.add(addStep, 2, 1);
+    	AnchorPane addStepGridPane  = new AnchorPane();
+    	addStepGridPane.getChildren().addAll(addStep);
+    	AnchorPane.setLeftAnchor(addStepGridPane.getChildren().get(0), 90.0);
+    	AnchorPane.setTopAnchor(addStepGridPane.getChildren().get(0), 135.0);
     	Scene addStepScene = new Scene(addStepGridPane, 300, 300);
+    	primaryStage.setAlwaysOnTop(true);
     	primaryStage.setScene(addStepScene);
     	primaryStage.show();
     	
@@ -100,42 +113,13 @@ public class CreatorUI extends Application {
     	primaryStage.setScene(addStepScene);
     	primaryStage.show();
     	
-    	
-    /*	GridPane configureStepGridPane = new GridPane();
-    	ObservableList<String> stepOptionsList = FXCollections.observableArrayList(
-    			"Click",
-    			"Double Click",
-    			"Right Click",
-    			"Hover",
-    			"Enter Text",
-    			"Get Text"   			
-    			);
-    	
-    	ComboBox stepOptionsBox = new ComboBox();
-    	stepOptionsBox.getItems().addAll(stepOptionsList);
-    	Button saveStep = new Button("Save Step");
-    	Button addNewStep = new Button("Add New Step");
-    	//Image croppedThumbnail = new Image();
-    	configureStepGridPane.add(stepOptionsBox, 2, 0);
-    	configureStepGridPane.add(saveStep, 2,4);
-    	configureStepGridPane.add(addNewStep,3,4);
-    	Scene configureStepScene = new Scene(configureStepGridPane,800,500);
-    	//addStepScene = new Scene(configureStepGridPane,800,500);
-    	//primaryStage.setScene(configureStepScene);
-    	//primaryStage.show();
-		
-    	
-    	if(finished == true) {
-    	configureStep();
-    	}*/
 	}
 	
 	private void configureStep() {
-		GridPane configureStepGridPane = new GridPane();
-		configureStepGridPane.setPadding(new Insets(20,20,20,20));
-		configureStepGridPane.setVgap(20);
-		configureStepGridPane.setHgap(20);
-		
+		AnchorPane configureStepPane = new AnchorPane();
+		//configureStepPane.setPadding(new Insets(20,20,20,20));
+		//configureStepPane.setVgap(5);
+		//configureStepPane.setHgap(5);		
     	ObservableList<String> stepOptionsList = FXCollections.observableArrayList(
     			"Click",
     			"Double Click",
@@ -149,26 +133,44 @@ public class CreatorUI extends Application {
     	stepOptionsBox.getItems().addAll(stepOptionsList);
     	Button saveStep = new Button("Save Step");
     	Button addNewStep = new Button("Add New Step");
-    	Image croppedThumbnail = new Image("File:./scott/1.png");
+    	Button reCapture = new Button("Recapture Image");
+    	Button back = new Button("Main Menu");
+    	
+    	Image croppedThumbnail = new Image("File:./Guides/"+guideName+"/"+stepCount+".png");
     	ImageView cropped = new ImageView(croppedThumbnail);
-    	/*double maxDimension,minDimension;
+    	double maxDimension,minDimension;
     	if(croppedThumbnail.getHeight() > croppedThumbnail.getWidth()) {
-    		//maxDimension = croppedThumbnail.getHeight();
-    		//minDimension = croppedThumbnail.getWidth();
-    		
+        	cropped.setFitHeight(250);
+        	cropped.setFitWidth(250*(croppedThumbnail.getWidth()/croppedThumbnail.getHeight()));    		
     	}
     	else {
-    		maxDimension = croppedThumbnail.getWidth();
-    		minDimension = croppedThumbnail.getHeight();
-
-    	}*/
-    	cropped.setFitWidth(250);
-    	cropped.setFitHeight(250);
-    	configureStepGridPane.add(cropped, 0, 0);
-    	configureStepGridPane.add(stepOptionsBox, 5, 0);
-    	configureStepGridPane.add(saveStep, 5,4);
-    	configureStepGridPane.add(addNewStep,6,4);
-    	Scene configureStepScene = new Scene(configureStepGridPane,700,400);
+    		cropped.setFitWidth(250);
+        	cropped.setFitHeight(250*(croppedThumbnail.getHeight()/croppedThumbnail.getWidth()));
+    	}
+    	
+    	configureStepPane.getChildren().addAll(cropped,stepOptionsBox,saveStep,addNewStep,reCapture,back);
+    	//Position Image
+    	AnchorPane.setLeftAnchor(configureStepPane.getChildren().get(0), 40.0);
+    	AnchorPane.setTopAnchor(configureStepPane.getChildren().get(0), ((400-cropped.getFitHeight())/2) - 35);
+    	//Position combobox
+    	AnchorPane.setLeftAnchor(configureStepPane.getChildren().get(1), 375.0);
+    	AnchorPane.setTopAnchor(configureStepPane.getChildren().get(1), 75.0);
+    	//Position saveStep button
+    	AnchorPane.setLeftAnchor(configureStepPane.getChildren().get(2), 350.0);
+    	AnchorPane.setTopAnchor(configureStepPane.getChildren().get(2), 300.0);
+    	//Position addNewStep button
+    	AnchorPane.setLeftAnchor(configureStepPane.getChildren().get(3), 450.0);
+    	AnchorPane.setTopAnchor(configureStepPane.getChildren().get(3), 300.0);
+    	//Position reCapture button
+    	AnchorPane.setLeftAnchor(configureStepPane.getChildren().get(4),80.0);
+    	AnchorPane.setBottomAnchor(configureStepPane.getChildren().get(4), 40.0);
+    	stepOptionsBox.getSelectionModel().getSelectedItem();
+    	//Position cance; button
+    	AnchorPane.setTopAnchor(configureStepPane.getChildren().get(5), 75.0);
+    	AnchorPane.setRightAnchor(configureStepPane.getChildren().get(5), 40.0);
+    	Scene configureStepScene = new Scene(configureStepPane,700,400);
+    	primaryStage.setX(600);
+    	primaryStage.setY(350);
     	primaryStage.setMaximized(false);
     	primaryStage.setScene(configureStepScene);
     	primaryStage.show();
@@ -178,7 +180,19 @@ public class CreatorUI extends Application {
     	});		
     	
     	saveStep.setOnAction((k) ->{
-    		//Save the step to database
+    		 //Save the step to database
+            DB db = new DB();
+            String action = (String) stepOptionsBox.getSelectionModel().getSelectedItem();
+            db.createStep(guideId, stepCount, action); //guideId needs to be given  and action
+    	});
+    	
+    	reCapture.setOnAction((l) ->{
+    		stepCount--;
+    		addStep();
+    	});
+    	
+    	back.setOnAction((m)-> {
+    		this.start();
     	});
 	}
 	
@@ -188,6 +202,7 @@ public class CreatorUI extends Application {
 	private void captureAOI() {
 		
 			System.out.println("Start snipping tool...");
+	    	primaryStage.setAlwaysOnTop(false);
 			primaryStage.hide();
 			elementCapture = new ElememtCapture();
 			try {
@@ -243,5 +258,76 @@ public class CreatorUI extends Application {
 				configureStep();
 			});
 		}
+	
+	public void playGuide() {
+		AnchorPane guideListPane = new AnchorPane();
+		ObservableList<String> guideList = FXCollections.observableArrayList();
+		//Get list of available guides
+		File guidesFile = new File("./Guides/");
+		File[] guideFiles = guidesFile.listFiles();
+		for(File guide : guideFiles) {
+			guideList.add(guide.getName());
+			System.out.println(guide.getName());
+		}
 		
+		ListView guideSelection = new ListView();
+		guideSelection.setItems(guideList);
+		Label guidesLabel = new Label("Select a guide:");
+		Button playGuide = new Button("Play Guide");
+		Scene guideListScene = new Scene(guideListPane,400,400);
+		guideListPane.getChildren().addAll(guideSelection,playGuide);
+		//Position listview
+		AnchorPane.setLeftAnchor(guideListPane.getChildren().get(0),40.0);
+		AnchorPane.setRightAnchor(guideListPane.getChildren().get(0),40.0);
+		AnchorPane.setBottomAnchor(guideListPane.getChildren().get(0),120.0);
+		AnchorPane.setTopAnchor(guideListPane.getChildren().get(0),40.0);
+
+		//Position play button
+		AnchorPane.setLeftAnchor(guideListPane.getChildren().get(1),150.0);
+		AnchorPane.setBottomAnchor(guideListPane.getChildren().get(1),40.0);
+
+		primaryStage.setScene(guideListScene);
+		primaryStage.show();
+		
+	}
+	
+	public void start() {
+		
+	    Button createGuide = new Button("Create new guide");
+	    createGuide.setOnAction((e) -> {
+	    	this.createNewGuide();
+	    });
+	    
+	    Button playGuide = new Button("Play Guide");
+	    playGuide.setOnAction((f) -> {
+	    	this.playGuide();
+	    });
+	    
+	    GridPane gridPane  = new GridPane();
+	   
+	    gridPane.setAlignment(Pos.CENTER);
+
+        // Set a padding of 20px on each side
+        gridPane.setPadding(new Insets(40, 40, 40, 40));
+
+        // Set the horizontal gap between columns
+        gridPane.setHgap(10);
+
+        // Set the vertical gap between rows
+        gridPane.setVgap(10);
+
+       
+        // gridPane.add(capImage, 0, 2); // not adding capture Image button in UI
+        gridPane.add(createGuide, 0, 3);
+        GridPane.setValignment(createGuide, VPos.CENTER);
+        gridPane.add(playGuide, 0, 5);
+        GridPane.setValignment(playGuide, VPos.CENTER);
+	    Scene scene = new Scene(gridPane, 300, 300);
+	    primaryStage.setTitle("MyGuide Desktop Automator");
+	    primaryStage.getIcons().add(new Image("file:resources\\ui\\ed-auto-cloud.png"));
+	    primaryStage.setScene(scene);
+	    primaryStage.show();
+	}
+		
+	
 }

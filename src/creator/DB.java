@@ -8,17 +8,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DB {
-	Connection connection;
-	Statement statement;
-	PreparedStatement preparedStatement;
+	private Connection connection;
+	private Statement statement;
+	private PreparedStatement preparedStatement;
 	
-	DB(){
+	public DB(){
 		// load the sqlite-JDBC driver using the current class loader
 	    try {
 	    	Class.forName("org.sqlite.JDBC");
 	    	// create a database connection
-	    	connection = DriverManager.getConnection("jdbc:sqlite:desktopguide.db");
-	    	
+	    	connection = DriverManager.getConnection("jdbc:sqlite:desktopguide.db"); //so it does create a table but throws an error
+	    	System.out.println("connection is established");
 	    	this.statement = connection.createStatement();
 	    	this.statement.setQueryTimeout(30);  // set timeout to 30 sec.
 		} catch (ClassNotFoundException | SQLException e) {
@@ -26,26 +26,49 @@ public class DB {
 		}
 	}
 	
-	void createGuide(String title, String author) {
+	public void createGuide(String title, String author) {
 		author = "pramod";
 		try {
-			String sql = "CREATE TABLE IF NOT EXISTS guideinfo (guideid INTEGER PRIMARY KEY AUTOINCREMENT, title STRING, author STRING)";
-			statement.executeQuery(sql);
-			
+			 // SQL statement for creating a new table
+		
+			String sql = "CREATE TABLE IF NOT EXISTS guideinfo(guideid INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, author TEXT)";
+			//statement.executeQuery(sql); //this is not returning a statement throws errror i think this throws error because createTable does not return result
+			statement.execute(sql); //this is not returning a statement throws errror i think this throws error because createTable does not return result
+
 			sql = "INSERT INTO guideinfo(title,author) values (?,?)";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, title);
 			preparedStatement.setString(2, author);
 			preparedStatement.executeUpdate();
-			
+			//need to somehow get the guide id in guideinfo 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	void createStep(int guideid, int stepCount, String action) {
+	/*
+	 * how to query   the guide info
+	 */
+	public void queryGuideInfo() {
+		 /**
+	     * select all rows in the warehouses table
+	  	*/
+	        String sql = "SELECT guideid, stepnumber, stepaction FROM guideinfo";
+	        
+	        try (   Statement stmt  = connection.createStatement();
+	                ResultSet rs    = stmt.executeQuery(sql)){
+		            // loop through the result set
+		            while (rs.next()) {
+		                System.out.println(rs.getInt("guideid") +  "\t" + 
+		                                   rs.getInt("stepnumber") + "\t" +
+		                                   rs.getString("stepaction"));
+		            }
+	         } catch (SQLException e) {
+	            System.out.println(e.getMessage());
+	        }
+	}
+	public void createStep(int guideid, int stepCount, String action) {
 		try {
-			String sql = "CREATE TABLE IF NOT EXISTS stepinfo (stepid INTEGER PRIMARY KEY AUTOINCREMENT, guideid INTEGER, stepnumber INTEGER, stepaction STRING)";
+			String sql = "CREATE TABLE IF NOT EXISTS stepinfo (stepid INTEGER PRIMARY KEY AUTOINCREMENT, guideid INTEGER, stepnumber INTEGER, stepaction TEXT)";
 			statement.executeQuery(sql);
 			
 			sql = "INSERT INTO guideinfo(guideid,stepnumber,stepaction) values (?,?,?)";

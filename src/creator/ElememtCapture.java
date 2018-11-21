@@ -25,8 +25,7 @@ public class ElememtCapture {
 		ImageIO.write(buf, "png", new File("screenshot.png"));
 
 		System.out.println("screenshot has been captured");
-		//should probably add a mouse listener event and caputre positon x and y of mouse
-		
+		//should probably add a mouse listener event and caputre positon x and y of mouse	
 	}
 	
 	public BufferedImage cropImage(String imageFile, javafx.scene.shape.Rectangle rect, String guideName, int stepCount) {
@@ -34,7 +33,7 @@ public class ElememtCapture {
 			BufferedImage image = ImageIO.read(new File(imageFile));
 			BufferedImage subImage = image.getSubimage((int)rect.getX(),(int)rect.getY(),(int)rect.getWidth(),(int)rect.getHeight());
 			// Timestamp t = new Timestamp(System.currentTimeMillis()); // implementing stepCount instead
-			String croppedImageFilename = "./"+ guideName+"/"+stepCount+".png";
+			String croppedImageFilename = "./Guides/"+ guideName+"/"+stepCount+".png";
 			ImageIO.write(subImage, "png", new File(croppedImageFilename));
 			System.out.println("File created: "+croppedImageFilename);
 			return subImage;
