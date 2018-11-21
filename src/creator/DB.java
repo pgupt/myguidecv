@@ -26,8 +26,9 @@ public class DB {
 		}
 	}
 	
-	public void createGuide(String title, String author) {
+	public int createGuide(String title, String author) {
 		author = "pramod";
+		int guideid =0;
 		try {
 			 // SQL statement for creating a new table
 		
@@ -40,10 +41,16 @@ public class DB {
 			preparedStatement.setString(1, title);
 			preparedStatement.setString(2, author);
 			preparedStatement.executeUpdate();
+			String findGuideidQuery = "select * from guideinfo where title='"+ title+ "'"; // find the guide where title is whats passed in
+			ResultSet  rs = statement.executeQuery(findGuideidQuery); 
+			//this will check all 
+			guideid = rs.getInt("guideid"); //only works for same title
+			System.out.println("the guide id is" + guideid);
 			//need to somehow get the guide id in guideinfo 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return guideid;
 	}
 	/*
 	 * how to query   the guide info
@@ -69,9 +76,9 @@ public class DB {
 	public void createStep(int guideid, int stepCount, String action) {
 		try {
 			String sql = "CREATE TABLE IF NOT EXISTS stepinfo (stepid INTEGER PRIMARY KEY AUTOINCREMENT, guideid INTEGER, stepnumber INTEGER, stepaction TEXT)";
-			statement.executeQuery(sql);
+			statement.execute(sql);
 			
-			sql = "INSERT INTO guideinfo(guideid,stepnumber,stepaction) values (?,?,?)";
+			sql = "INSERT INTO stepinfo(guideid,stepnumber,stepaction) values (?,?,?)";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setInt(1, guideid);
 			preparedStatement.setInt(2, stepCount);

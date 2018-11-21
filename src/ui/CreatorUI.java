@@ -86,7 +86,7 @@ public class CreatorUI extends Application {
             this.addStep();
             //use this part to link to database
             DB db = new DB();
-            db.createGuide(guideName, author); //default name to Pramod
+            guideId = db.createGuide(guideName, author); //default name to Pramod
 
             //fornowguideid will be Math.random 100000 or
         });
