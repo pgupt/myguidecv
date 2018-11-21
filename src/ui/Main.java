@@ -53,6 +53,7 @@ public class Main extends Application {
 	static Rectangle rect = new Rectangle();
 	ElememtCapture elementCapture;
 	CreatorUI creatorUI;
+	PlayerUI playerUI;
 	int stepCount;
 	
 	/*
@@ -80,62 +81,7 @@ public class Main extends Application {
 	  public void start(Stage primaryStage) throws Exception {
 
 		Button capImage = new Button("Capture Images");
-		/*capImage.setOnAction((e) -> {
-			primaryStage.hide();
-			elementCapture = new ElememtCapture();
-			try {
-				Thread.sleep(500);
-				elementCapture.screenshot();
-			} catch (AWTException | IOException | InterruptedException e1) {
-				e1.printStackTrace();
-			}
-
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			//GridPane gridPane3 = new GridPane();	   
-			AnchorPane stackPane = new AnchorPane();
-
-			//Scene imageScene = new Scene(gridPane3,screenSize.getWidth(),screenSize.getHeight());
-			Scene imageScene = new Scene(stackPane,screenSize.getWidth(),screenSize.getHeight());
-			final Canvas canvas = new Canvas(screenSize.getWidth(),screenSize.getHeight());
-			//GraphicsContext gc = canvas.getGraphicsContext2D();
-			Image capture = new Image("File:screenshot.png");
-			//gridPane3.add(new ImageView(capture),0,0);        
-
-			stackPane.getChildren().addAll(canvas, new ImageView(capture),rect);
-			primaryStage.setScene(imageScene);
-			primaryStage.setMaximized(true);
-			primaryStage.show();
-
-			//Point initial = new Point();
-			imageScene.setOnMousePressed(event -> {       
-				stackPane.getChildren().remove(rect);
-				initial = MouseInfo.getPointerInfo().getLocation();
-				System.out.println("detected: " + initial.getX() +", " + initial.getY());
-				event.consume();                
-			});
-
-			imageScene.setOnMouseDragged(event -> {       
-				stackPane.getChildren().remove(rect);
-				Point dragging = MouseInfo.getPointerInfo().getLocation();
-				System.out.println("!!dragging!!: " + dragging.getX() +", " + dragging.getY());
-				//	gc.strokeRect(initial.getX(), initial.getY(), Math.abs(initial.getX()-dragging.getX()),Math.abs(initial.getY()-dragging.getY()) ); 			
-				rect = new Rectangle((int)initial.getX(), (int)(initial.getY() - 30), (int)Math.abs(initial.getX()-dragging.getX()),(int)Math.abs(initial.getY()-dragging.getY()));
-				rect.opacityProperty().set(0.1);
-				//Rectangle rect = new Rectangle();
-				//rect.setX(arg0);
-				stackPane.getChildren().add(rect);
-				event.consume();                
-			});
-
-			imageScene.setOnMouseReleased(event -> {
-				Point finalPoint = MouseInfo.getPointerInfo().getLocation();
-				System.out.println("released: " + finalPoint.getX() +", " + finalPoint.getY());   
-				cropImage("screenshot.png",rect);
-				event.consume();
-			});
-
-
-		});*/
+		
 		
     			    
 	    Button createGuide = new Button("Create new guide");
@@ -146,8 +92,8 @@ public class Main extends Application {
 	    
 	    Button playGuide = new Button("Play Guide");
 	    playGuide.setOnAction((f) -> {
-	    	creatorUI = new CreatorUI(primaryStage);
-	    	creatorUI.playGuide();
+	    	playerUI = new PlayerUI(primaryStage);
+	    	playerUI.playGuide();
 	    });
 	    
 	    GridPane gridPane  = new GridPane();

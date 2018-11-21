@@ -12,7 +12,10 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 
-import creator.DB;
+import com.tigervnc.rfb.Cursor;
+
+import common.*;
+
 import creator.ElememtCapture;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -39,7 +42,7 @@ public class CreatorUI extends Application {
 	Stage primaryStage;
 	ElememtCapture elementCapture;
 	static Point initial = new Point();
-	static Rectangle rect = new Rectangle();
+	static Rectangle rect;
 	int stepCount;
 	int guideId;
 	public String author = "pramod";
@@ -93,20 +96,21 @@ public class CreatorUI extends Application {
    }
 
 	private void addStep() {
-    	Button addStep = new Button("Capture Screen");
+    	Button captureElement = new Button("Capture element");
     	AnchorPane addStepGridPane  = new AnchorPane();
-    	addStepGridPane.getChildren().addAll(addStep);
+    	addStepGridPane.getChildren().addAll(captureElement);
     	AnchorPane.setLeftAnchor(addStepGridPane.getChildren().get(0), 90.0);
     	AnchorPane.setTopAnchor(addStepGridPane.getChildren().get(0), 135.0);
     	Scene addStepScene = new Scene(addStepGridPane, 300, 300);
+    	
     	primaryStage.setAlwaysOnTop(true);
     	primaryStage.setScene(addStepScene);
     	primaryStage.show();
     	
     	
-    	addStep.setOnAction((g) -> {
+    	captureElement.setOnAction((g) -> {
     		stepCount++;
-			//primaryStage.hide();
+			
     		this.captureAOI();	        	    	  		    		
 	    });    	
     	
@@ -225,6 +229,7 @@ public class CreatorUI extends Application {
 			
 			rect = new Rectangle();
 			stackPane.getChildren().addAll(canvas, new ImageView(capture),rect);
+			imageScene.setCursor(javafx.scene.Cursor.CROSSHAIR);
 			primaryStage.setScene(imageScene);
 			primaryStage.setMaximized(true);
 			primaryStage.show();
@@ -242,8 +247,8 @@ public class CreatorUI extends Application {
 				Point dragging = MouseInfo.getPointerInfo().getLocation();
 				System.out.println("!!dragging!!: " + dragging.getX() +", " + dragging.getY());
 				//	gc.strokeRect(initial.getX(), initial.getY(), Math.abs(initial.getX()-dragging.getX()),Math.abs(initial.getY()-dragging.getY()) ); 			
-				rect = new Rectangle((int)initial.getX(), (int)(initial.getY() - 30), (int)Math.abs(initial.getX()-dragging.getX()),(int)Math.abs(initial.getY()-dragging.getY()));
-				rect.opacityProperty().set(0.1);
+				rect = new Rectangle((int)initial.getX(), (int)(initial.getY() - 23 ), (int)Math.abs(initial.getX()-dragging.getX()),(int)Math.abs(initial.getY()-dragging.getY()));
+				rect.opacityProperty().set(0.2);
 				//Rectangle rect = new Rectangle();
 				//rect.setX(arg0);
 				stackPane.getChildren().add(rect);
@@ -259,7 +264,7 @@ public class CreatorUI extends Application {
 			});
 		}
 	
-	public void playGuide() {
+	/*public void playGuide() {
 		AnchorPane guideListPane = new AnchorPane();
 		ObservableList<String> guideList = FXCollections.observableArrayList();
 		//Get list of available guides
@@ -289,16 +294,16 @@ public class CreatorUI extends Application {
 		primaryStage.setScene(guideListScene);
 		primaryStage.show();
 		
-	}
+	}*/
 	
 	public void start() {
 		
-	    Button createGuide = new Button("Create new guide");
+	    /*Button createGuide = new Button("Create new guide");
 	    createGuide.setOnAction((e) -> {
 	    	this.createNewGuide();
 	    });
 	    
-	    Button playGuide = new Button("Play Guide");
+	    Button play = new Button("Play");
 	    playGuide.setOnAction((f) -> {
 	    	this.playGuide();
 	    });
@@ -320,13 +325,13 @@ public class CreatorUI extends Application {
         // gridPane.add(capImage, 0, 2); // not adding capture Image button in UI
         gridPane.add(createGuide, 0, 3);
         GridPane.setValignment(createGuide, VPos.CENTER);
-        gridPane.add(playGuide, 0, 5);
-        GridPane.setValignment(playGuide, VPos.CENTER);
+        gridPane.add(play, 0, 5);
+        GridPane.setValignment(play, VPos.CENTER);
 	    Scene scene = new Scene(gridPane, 300, 300);
 	    primaryStage.setTitle("MyGuide Desktop Automator");
 	    primaryStage.getIcons().add(new Image("file:resources\\ui\\ed-auto-cloud.png"));
 	    primaryStage.setScene(scene);
-	    primaryStage.show();
+	    primaryStage.show();*/
 	}
 		
 	
